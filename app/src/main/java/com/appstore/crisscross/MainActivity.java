@@ -22,11 +22,11 @@ public class MainActivity extends AppCompatActivity {
         clicked = new int[9];
         for(int i=0; i<6; i++)
             clicked[i] = 0;
+        ((TextView)findViewById(R.id.text)).setText("Turn: Player "+switchUser);
     }
 
     public void onTap(View view) {
         ImageView image = (ImageView)view;
-        ((TextView)findViewById(R.id.text)).setText("Turn: Player "+switchUser);
         switch (image.getId()) {
             case R.id.i00:
                 if(clicked[0]==0)
@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
             builder.show();
         }
         switchUser = switchUser%2 + 1;
+        ((TextView)findViewById(R.id.text)).setText("Turn: Player "+switchUser);
     }
 
     private boolean hasWon() {
