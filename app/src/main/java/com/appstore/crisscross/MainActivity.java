@@ -12,12 +12,13 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     int switchUser, clicked[];
-    boolean win;
+    boolean win, gameActive;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         switchUser = 1;
+        gameActive=true;
         win = false;
         clicked = new int[9];
         for(int i=0; i<6; i++)
@@ -26,79 +27,105 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onTap(View view) {
-        ImageView image = (ImageView)view;
-        switch (image.getId()) {
-            case R.id.i00:
-                if(clicked[0]==0)
-                    clicked[0] = switchUser;
-                else return;
-                break;
-            case R.id.i01:
-                if(clicked[1]==0)
-                    clicked[1] = switchUser;
-                else return;
-                break;
-            case R.id.i02:
-                if(clicked[2]==0)
-                    clicked[2] = switchUser;
-                else return;
-                break;
-            case R.id.i10:
-                if(clicked[3]==0)
-                    clicked[3] = switchUser;
-                else return;
-                break;
-            case R.id.i11:
-                if(clicked[4]==0)
-                    clicked[4] = switchUser;
-                else return;
-                break;
-            case R.id.i12:
-                if(clicked[5]==0)
-                    clicked[5] = switchUser;
-                else return;
-                break;
-            case R.id.i20:
-                if(clicked[6]==0)
-                    clicked[6] = switchUser;
-                else return;
-                break;
-            case R.id.i21:
-                if(clicked[7]==0)
-                    clicked[7] = switchUser;
-                else return;
-                break;
-            default:
-                if(clicked[8]==0)
-                    clicked[8] = switchUser;
-                else return;
-                break;
-        }
-        if(switchUser==1) {
-            image.setImageResource(R.drawable.blue);
-        }
-        else {
-            image.setImageResource(R.drawable.green);
-        }
-        win = hasWon();
-        if(win) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Game over").setMessage("Player "+switchUser+" won").setPositiveButton("Play again", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    finish();
-                    startActivity(getIntent());
+        if(gameActive) {
+            ImageView image = (ImageView) view;
+            switch (image.getId()) {
+                case R.id.i00:
+                    if (clicked[0] == 0)
+                        clicked[0] = switchUser;
+                    else return;
+                    break;
+                case R.id.i01:
+                    if (clicked[1] == 0)
+                        clicked[1] = switchUser;
+                    else return;
+                    break;
+                case R.id.i02:
+                    if (clicked[2] == 0)
+                        clicked[2] = switchUser;
+                    else return;
+                    break;
+                case R.id.i10:
+                    if (clicked[3] == 0)
+                        clicked[3] = switchUser;
+                    else return;
+                    break;
+                case R.id.i11:
+                    if (clicked[4] == 0)
+                        clicked[4] = switchUser;
+                    else return;
+                    break;
+                case R.id.i12:
+                    if (clicked[5] == 0)
+                        clicked[5] = switchUser;
+                    else return;
+                    break;
+                case R.id.i20:
+                    if (clicked[6] == 0)
+                        clicked[6] = switchUser;
+                    else return;
+                    break;
+                case R.id.i21:
+                    if (clicked[7] == 0)
+                        clicked[7] = switchUser;
+                    else return;
+                    break;
+                default:
+                    if (clicked[8] == 0)
+                        clicked[8] = switchUser;
+                    else return;
+                    break;
+            }
+            if (switchUser == 1) {
+                image.setImageResource(R.drawable.blue);
+            } else {
+                image.setImageResource(R.drawable.green);
+            }
+            win = hasWon();
+            if (win) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Game over").setMessage("Player " + switchUser + " won").setPositiveButton("Play again", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                        startActivity(getIntent());
+                    }
+                }).setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+                builder.show();
+                return;
+            } else {
+                gameActive = false;
+                for (int i = 0; i < 9; i++) {
+                    if (clicked[i] == 0)
+                        gameActive = true;
                 }
-            }).setNegativeButton("Quit", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    finish();
+                if (!gameActive) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Game over").setMessage("Match drawn").setPositiveButton("Play again", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                            startActivity(getIntent());
+                        }
+                    }).setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+                    builder.show();
+                    return;
                 }
-            });
-            builder.show();
+            }
+            switchUser = switchUser % 2 + 1;
+            ((TextView) findViewById(R.id.text)).setText("Turn: Player " + switchUser);
         }
-        switchUser = switchUser%2 + 1;
-        ((TextView)findViewById(R.id.text)).setText("Turn: Player "+switchUser);
     }
 
     private boolean hasWon() {
